@@ -11,7 +11,7 @@ def dijkstra(graph, queue, distances, visited, previous, end):
         while current_node is not None:
             path.append(current_node) # Add current node to path
             current_node = previous[current_node] # Set current node to previous node
-        return path[::-1] # Returned reversed path (So it's Start to End)
+        return path[::-1], current_distance # Returned reversed path (So it's Start to End), and the distance to here
 
     if current_node in visited: # If current node has already been visited, continue to next node
         return dijkstra(graph, queue, distances, visited, previous, end)
@@ -33,4 +33,5 @@ def shortest_route(graph, start, end):
     previous = {node: None for node in graph}
     queue = [(0, start)]
 
-    return dijkstra(graph, queue, distances, set(), previous, end)
+    path, distance = dijkstra(graph, queue, distances, set(), previous, end)
+    return path, distance
