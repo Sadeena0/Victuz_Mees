@@ -27,7 +27,10 @@ activities = {
 }
 
 def main():
-    current_location = 'A'
+    transport_options = ["Auto", "Bus", "Fiets", "Te voet"]
+    location_mapping = ["A", "B", "C", "D"]
+    transport_choice = get_choice("Hoe bent u hier gekomen?", transport_options, 'F')
+    current_location = location_mapping[transport_choice]
 
     print('In geval van nood, voer "NOOD" in!')
     print('Kies nu uw activiteiten:')
