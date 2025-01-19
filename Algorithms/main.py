@@ -29,23 +29,17 @@ activities = {
 def main():
     current_location = 'A'
 
+    print('In geval van nood, voer "NOOD" in!')
+    print('Kies nu uw activiteiten:')
+
     for time, options in activities.items():
         print(f"{time} Activiteiten:")
         for i, (activity, location) in enumerate(options, 1):
             print(f"  {i}. {activity} op locatie {location}")
 
-        if len(options) == 1:
-            choice = 0
-        else:
-            choice = -1
-            while choice == -1:
-                try:
-                    choice = int(input(f"Kies activiteit voor {time} (1-{len(options)}): ")) - 1
-                    if choice < 0 or choice >= len(options):
-                        choice = -1
-                        print("Kies een activiteit uit de lijst!")
-                except ValueError:
-                    print("Voer een getal in!")
+        choice = 0
+        if len(options) > 1:
+            get_choice(f"Kies activiteit voor {time}", options, current_location)
 
         chosen_activity, destination = options[choice]
 
@@ -53,6 +47,23 @@ def main():
 
         route = shortest_route(demograph, current_location, destination)
         print(f"Route naar {destination}: {route}")
+
+def get_choice(prompt, options, current_location):
+    choice = -1
+    while choice == -1:
+        try:
+            inp = input(f"{prompt} (1-{len(options)}): ")
+            if inp == "NOOD":
+                route = shortest_route(demograph, current_location, 'F')
+                print(f"Route naar Nooduitgang: {route}")
+                exit()
+            choice = int(inp) - 1
+            if choice < 0 or choice >= len(options):
+                choice = -1
+                print("Kies een activiteit uit de lijst!")
+        except ValueError:
+            print("Voer een getal in!")
+    return choice
 
 if __name__ == '__main__':
     main()
