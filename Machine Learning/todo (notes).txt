@@ -1,0 +1,17 @@
+dataframes samenvoegen (functie in utils.py?)
+
+multiple linear regression niet effectief
+logistic regression opnieuw naar kijken?
+
+knn, trees
+
+association rules gaan goed, verder onderzoek naar doen (wel/niet nuttig voor opdrachtgever?)
+association rules van losse csv's opstellen (nu weegt 1 event met 100 deelnemers zwaarder dan 1 event met 1 deelnemer)
+
+clustering doen (k means, hierarchical?)
+
+data visualisatie en summarisatie
+
+heatmap werkt alleen met floats vergelijken (niet catagorische variabelen)
+
+zie mail Chris, voor samenhang met algorithms!
