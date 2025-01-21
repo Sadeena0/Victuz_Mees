@@ -102,6 +102,9 @@ def selection(model, df, outcome, remaining_predictors, current_best_predictors 
 
     dict_scores = {}
 
+    if len(remaining_predictors) == 0:
+        return None, 0
+
     # For each individual predictor in remaining predictors
     for possible_predictor in remaining_predictors:
         print(f'Checking predictor: {possible_predictor}')
