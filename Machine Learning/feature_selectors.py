@@ -1,4 +1,5 @@
 from sklearn.metrics import f1_score, recall_score, accuracy_score, precision_score
+import pandas as pd
 
 
 def forward_selection(model, df, outcome, remaining_predictors, current_best_predictors = [], current_best_score = 0,
@@ -171,3 +172,81 @@ def selection(model, df, outcome, remaining_predictors, current_best_predictors 
 
     print(f'Best predictors: {current_best_predictors}\nCorresponding score: {current_best_score}')
     return current_best_predictors, current_best_score
+
+
+def merge_on_aanwezigheid(aanwezigheid_df, evenement_df, gebruikers_df):
+    # Drop duplicates
+    df = aanwezigheid_df.drop_duplicates(subset = ['EvenementID', 'GebruikerID'], keep = 'first')
+
+    # Merge aanwezigheid_df with evenement_df
+    df = df.merge(evenement_df, on = "EvenementID", how = "left")
+
+    # Merge the result with gebruikers_df
+    df = df.merge(gebruikers_df, on = "GebruikerID", how = "left")
+
+    # Rename columns for consistency
+    df.rename(
+        columns = {col: f"Evenement_{col}" for col in evenement_df.columns if col != "EvenementID"},
+        inplace = True
+    )
+
+    df.rename(
+        columns = {col: f"Gebruiker_{col}" for col in gebruikers_df.columns if col != "GebruikerID"},
+        inplace = True
+    )
+
+    df = df.map(lambda x: x.lower() if isinstance(x, str) else x)
+
+    return df
+
+
+def merge_on_bericht(bericht_df, evenement_df, gebruikers_df):
+    # Merge bericht_df with evenement_df
+    df = bericht_df.merge(evenement_df, on = "EvenementID", how = "left")
+
+    # Merge the result with gebruikers_df
+    df = df.merge(gebruikers_df, on = "GebruikerID", how = "left")
+
+    # Rename columns for consistency
+    df.rename(
+        columns = {col: f"Evenement_{col}" for col in evenement_df.columns if col != "EvenementID"},
+        inplace = True
+    )
+
+    df.rename(
+        columns = {col: f"Gebruiker_{col}" for col in gebruikers_df.columns if col != "GebruikerID"},
+        inplace = True
+    )
+
+    df = df.map(lambda x: x.lower() if isinstance(x, str) else x)
+
+    return df
+
+
+def merge_on_all(bericht_df, evenement_df, gebruikers_df, aanwezigheid_df):
+    # Drop duplicates
+    df = aanwezigheid_df.drop_duplicates(subset = ['EvenementID', 'GebruikerID'], keep = 'first')
+
+    # Merge df with evenement_df
+    df = df.merge(evenement_df, on = "EvenementID", how = "left")
+
+    # Merge the result with gebruikers_df
+    df = df.merge(gebruikers_df, on = "GebruikerID", how = "left")
+
+    # Merge bericht_df with evenement_df
+    df = bericht_df.merge(df, on = ['EvenementID', 'GebruikerID'], how = "left")
+
+    # Rename columns for consistency
+    df.rename(
+        columns = {col: f"Evenement_{col}" for col in evenement_df.columns if col != "EvenementID"},
+        inplace = True
+    )
+
+    df.rename(
+        columns = {col: f"Gebruiker_{col}" for col in gebruikers_df.columns if col != "GebruikerID"},
+        inplace = True
+    )
+
+    df = df.map(lambda x: x.lower() if isinstance(x, str) else x)
+
+    return df
