@@ -90,7 +90,7 @@ def selection(model, df, outcome, remaining_predictors, current_best_predictors 
     Parameters:
     - model: The machine learning model to be trained.
     - df: DataFrame containing the dataset.
-    - outcome: The name of the outcome column.
+    - outcome: DataFrame of the outcome.
     - predictors: List of possible predictors to choose from.
     - current_best_predictors: List of predictors chosen in previous iterations (default empty).
     - current_best_score: Score from the previous iteration (default 0).
@@ -98,8 +98,9 @@ def selection(model, df, outcome, remaining_predictors, current_best_predictors 
     - is_regression: If True, assume it's a regression problem; otherwise, classification.
 
     Returns:
-    - The list of selected predictors."""
-    print(f'\nCurrently best predictors: {current_best_predictors}\nCorresponding score: {current_best_score}')
+    - The list of selected predictors and the corresponding score."""
+
+    # print(f'\nCurrently best predictors: {current_best_predictors}\nCorresponding score: {current_best_score}')
 
     dict_scores = {}
 
@@ -108,7 +109,7 @@ def selection(model, df, outcome, remaining_predictors, current_best_predictors 
 
     # For each individual predictor in remaining predictors
     for possible_predictor in remaining_predictors:
-        print(f'Checking predictor: {possible_predictor}')
+        # print(f'Checking predictor: {possible_predictor}')
 
         # If forward, add it to current best predictors to test score
         if mode == 'forward':
@@ -135,7 +136,7 @@ def selection(model, df, outcome, remaining_predictors, current_best_predictors 
             score = precision_score(outcome, model.predict(test_predictors), zero_division = 0)
 
         dict_scores[possible_predictor] = score
-        print(f'Score: {score}')
+        # print(f'Score: {score}')
 
     # Get predictor with the highest score
     highest_predictor = max(dict_scores, key = dict_scores.get)
@@ -143,34 +144,34 @@ def selection(model, df, outcome, remaining_predictors, current_best_predictors 
 
     if mode == 'forward':
         if highest_value > current_best_score:
-            print(f'Found score higher than current best (Adding {highest_predictor}, score: {highest_value})')
+            # print(f'Found score higher than current best (Adding {highest_predictor}, score: {highest_value})')
 
             # Add the best predictor to current best predictor & update best score
             current_best_predictors, current_best_score = current_best_predictors + [highest_predictor], highest_value
             remaining_predictors = list(set(remaining_predictors) - {highest_predictor})
 
-            print(f'Best predictors is now: {current_best_predictors}')
-            print(f'Score was improved, recurring...')
+            # print(f'Best predictors is now: {current_best_predictors}')
+            # print(f'Score was improved, recurring...')
 
             # Recur and remove this iteration's best predictor from remaining predictors to test
             return selection(model, df, outcome, remaining_predictors, current_best_predictors,
                              current_best_score, mode, metric)
     elif mode == 'backward':
         if highest_value >= current_best_score:
-            print(f'Found score higher than current best (Removing {highest_predictor}, score: {highest_value})')
+            # print(f'Found score higher than current best (Removing {highest_predictor}, score: {highest_value})')
 
             # Remove the best predictor from remaining predictors & update best score
             remaining_predictors, current_best_score = list(
                 set(remaining_predictors) - {highest_predictor}), highest_value
             current_best_predictors = remaining_predictors
 
-            print(f'Best predictors is now: {current_best_predictors}')
-            print(f'Score was improved, recurring...')
+            # print(f'Best predictors is now: {current_best_predictors}')
+            # print(f'Score was improved, recurring...')
 
             return selection(model, df, outcome, remaining_predictors, current_best_predictors, current_best_score,
                              mode, metric)
 
-    print(f'Best predictors: {current_best_predictors}\nCorresponding score: {current_best_score}')
+    # print(f'Best predictors: {current_best_predictors}\nCorresponding score: {current_best_score}')
     return current_best_predictors, current_best_score
 
 
