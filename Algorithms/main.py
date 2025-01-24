@@ -19,11 +19,17 @@ activities = {
     "Noon": [
         ("Lunch", 'H')
     ],
-    "Afternoon": [
+    "Early Afternoon": [
         ("Lesson 1", 'C'),
         ("Lesson 2", 'A'),
         ("Lesson 3", 'E')
+    ],
+    "Late Afternoon": [
+        ("Lesson 1", 'C'),
+        ("Lesson 2", 'D'),
+        ("Lesson 3", 'A')
     ]
+
 }
 
 def main():
