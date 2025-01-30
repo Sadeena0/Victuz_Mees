@@ -1,45 +1,46 @@
 from Dijkstra import *
+import json
+import random
 
-demograph = {
-    'A': [('B', 18), ('C', 12), ('D', 35), ('E', 30)],
-    'B': [('A', 18), ('D', 16), ('E', 18)],
-    'C': [('A', 12), ('D', 23), ('F', 11)],
-    'D': [('A', 35), ('B', 16), ('C', 23), ('E', 21), ('F', 10), ('G', 12), ('H', 40)],
-    'E': [('B', 18), ('D', 21), ('G', 17)],
-    'F': [('C', 11), ('D', 10), ('G', 25), ('H', 55)],
-    'G': [('D', 12), ('E', 17), ('F', 25), ('H', 20)],
-    'H': [('D', 40), ('F', 55), ('G', 20)]
-}
+def load_graph(file_path):
+    with open(file_path, 'r') as file:
+        graph = json.load(file)
+    return graph
+
+graph = load_graph("graph.json")
 
 activities = {
     "Morning": [
-        ("Lesson 1", 'B'),
-        ("Lesson 2", 'D')
+        ("Lezing 1", 'B3.209'),
+        ("Hackaton 1", 'B1.209')
     ],
     "Noon": [
-        ("Lunch", 'H')
+        ("Lunch", 'Restaurant')
     ],
     "Early Afternoon": [
-        ("Lesson 1", 'C'),
-        ("Lesson 2", 'A'),
-        ("Lesson 3", 'E')
+        ("Lezing 2", 'B1.210'),
+        ("Lezing 3", 'B2.210'),
+        ("Workshop 1", 'B3.210')
     ],
     "Late Afternoon": [
-        ("Lesson 1", 'C'),
-        ("Lesson 2", 'D'),
-        ("Lesson 3", 'A')
+        ("Workshop 2", 'B1.305'),
+        ("Hackaton 2", 'B2.305'),
+        ("Workshop 3", 'B3.305')
     ]
 
 }
 
 def main():
-    transport_options = ["Auto", "Bus", "Fiets", "Te voet"]
-    location_mapping = ["A", "B", "C", "D"]
-    transport_choice = get_choice("Hoe bent u hier gekomen?", transport_options, 'F')
+    transport_options = ["Auto", "Bus", "Fiets"]
+    location_mapping = ["Ingang Parkeren", "Hoofdingang", "Hoofdingang"]
+    for i, (option) in enumerate(transport_options, 1):
+        print(f"  {i}. {option}")
+    transport_choice = get_choice("Hoe bent u hier gekomen?", transport_options, 'Hoofdingang')
     current_location = location_mapping[transport_choice]
 
-    print('In geval van nood, voer "NOOD" in!')
-    print('Kies nu uw activiteiten:')
+    mobility = not bool(get_choice("Heeft u mobiliteitsproblemen?\n  1. Ja \n  2. Nee\n", ["Ja", "Nee"], current_location))
+
+    print('\nIn geval van nood, voer "NOOD" in!')
 
     for time, options in activities.items():
         print(f"{time} Activiteiten:")
@@ -48,22 +49,23 @@ def main():
 
         choice = 0
         if len(options) > 1:
-            get_choice(f"Kies activiteit voor {time}", options, current_location)
+            choice = get_choice(f"Kies activiteit voor {time}", options, current_location, mobility)
 
         chosen_activity, destination = options[choice]
 
         print(f"\nKeuze: {chosen_activity} op locatie {destination}")
 
-        route = shortest_route(demograph, current_location, destination)
+        route, _ = shortest_route(graph, current_location, destination, mobility)
+        current_location = destination
         print(f"Route naar {destination}: {route}")
 
-def get_choice(prompt, options, current_location):
+def get_choice(prompt, options, current_location, mobility=False):
     choice = -1
     while choice == -1:
         try:
             inp = input(f"{prompt} (1-{len(options)}): ")
             if inp == "NOOD":
-                route = shortest_route(demograph, current_location, 'F')
+                route = emergency_exit(current_location, mobility)
                 print(f"Route naar Nooduitgang: {route}")
                 exit()
             choice = int(inp) - 1
@@ -73,6 +75,22 @@ def get_choice(prompt, options, current_location):
         except ValueError:
             print("Voer een getal in!")
     return choice
+
+def emergency_exit(current_location, mobility=False):
+    emergency_nodes = [node for node in graph if node.startswith("Nood")]
+    if not emergency_nodes:
+        return None
+
+    shortest_path = None
+    shortest_distance = float('inf')
+
+    for emergency_node in emergency_nodes:
+        route, distance = shortest_route(graph, current_location, emergency_node, mobility, emergency=True)
+        if distance < shortest_distance:
+            shortest_distance = distance
+            shortest_path = route
+
+    return shortest_path
 
 if __name__ == '__main__':
     main()

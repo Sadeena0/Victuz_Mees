@@ -31,7 +31,7 @@ def dijkstra(graph, queue, distances, visited, previous, end):
     return dijkstra(graph, queue, distances, visited, previous, end)
 
 
-def shortest_route(graph, start, end, wheelchair=False):
+def shortest_route(graph, start, end, wheelchair=False, emergency=False):
     distances = {node: float('inf') for node in graph}
     distances[start] = 0
     previous = {node: None for node in graph}
@@ -40,11 +40,20 @@ def shortest_route(graph, start, end, wheelchair=False):
     for node in graph:
         for connection in graph[node]:
             if wheelchair:
-                if len(connection) == 3 and connection[2] == 'Stairs':
-                    graph[node].remove(connection)
+                if emergency:
+                    if len(connection) == 3 and connection[2] == 'Lift':
+                        graph[node].remove(connection)
+                else:
+                    if len(connection) == 3 and connection[2] == 'Stairs':
+                        graph[node].remove(connection)
             else:
                 if len(connection) == 3 and connection[2] == 'Lift':
                     graph[node].remove(connection)
 
-    path, distance = dijkstra(graph, queue, distances, set(), previous, end)
-    return path, distance
+    result = dijkstra(graph, queue, distances, set(), previous, end)
+    if result is None:
+        return None, float('inf')
+    else:
+        path, distance = result
+        return path, distance
+
