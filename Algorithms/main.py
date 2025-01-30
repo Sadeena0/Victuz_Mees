@@ -1,6 +1,5 @@
 from Dijkstra import *
 import json
-import random
 
 def load_graph(file_path):
     with open(file_path, 'r') as file:
@@ -10,19 +9,19 @@ def load_graph(file_path):
 graph = load_graph("graph.json")
 
 activities = {
-    "Morning": [
+    "10:00": [
         ("Lezing 1", 'B3.209'),
         ("Hackaton 1", 'B1.209')
     ],
-    "Noon": [
+    "12:00": [
         ("Lunch", 'Restaurant')
     ],
-    "Early Afternoon": [
+    "13:00": [
         ("Lezing 2", 'B1.210'),
         ("Lezing 3", 'B2.210'),
         ("Workshop 1", 'B3.210')
     ],
-    "Late Afternoon": [
+    "15:00": [
         ("Workshop 2", 'B1.305'),
         ("Hackaton 2", 'B2.305'),
         ("Workshop 3", 'B3.305')

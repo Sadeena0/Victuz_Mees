@@ -1,6 +1,5 @@
 from heapq import heappush, heappop
 
-
 def dijkstra(graph, queue, distances, visited, previous, end):
     if not queue:
         return None
