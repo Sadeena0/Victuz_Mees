@@ -17,7 +17,7 @@ activities = {
         ("Lunch", 'Restaurant')
     ],
     "13:00": [
-        ("Lezing 2", 'B1.210'),
+        ("Lezing 2", 'Collegezaal 0.103'),
         ("Lezing 3", 'B2.210'),
         ("Workshop 1", 'B3.210')
     ],
