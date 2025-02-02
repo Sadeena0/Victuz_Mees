@@ -11,7 +11,7 @@ graph = load_graph("graph.json")
 activities = {
     "10:00": [
         ("Lezing 1", 'B3.209'),
-        ("Hackaton 1", 'B1.209')
+        ("Hackathon 1", 'B1.209')
     ],
     "12:00": [
         ("Lunch", 'Restaurant')
@@ -23,7 +23,7 @@ activities = {
     ],
     "15:00": [
         ("Workshop 2", 'B1.305'),
-        ("Hackaton 2", 'B2.305'),
+        ("Hackathon 2", 'B2.305'),
         ("Workshop 3", 'B3.305')
     ]
 
@@ -36,10 +36,12 @@ def main():
         print(f"  {i}. {option}")
     transport_choice = get_choice("Hoe bent u hier gekomen?", transport_options, 'Hoofdingang')
     current_location = location_mapping[transport_choice]
+    original_location = current_location
 
     mobility = not bool(get_choice("Heeft u mobiliteitsproblemen?\n  1. Ja \n  2. Nee\n", ["Ja", "Nee"], current_location))
 
     print('\nIn geval van nood, voer "NOOD" in!')
+    print('\nAls u vroegtijdig naar huis wilt, voer "UIT" in!')
 
     for time, options in activities.items():
         print(f"{time} Activiteiten:")
@@ -48,7 +50,7 @@ def main():
 
         choice = 0
         if len(options) > 1:
-            choice = get_choice(f"Kies activiteit voor {time}", options, current_location, mobility)
+            choice = get_choice(f"Kies activiteit voor {time}", options, current_location, original_location, mobility)
 
         chosen_activity, destination = options[choice]
 
@@ -58,7 +60,7 @@ def main():
         current_location = destination
         print(f"Route naar {destination}: {route}")
 
-def get_choice(prompt, options, current_location, mobility=False):
+def get_choice(prompt, options, current_location, original_location=None, mobility=False):
     choice = -1
     while choice == -1:
         try:
@@ -66,6 +68,10 @@ def get_choice(prompt, options, current_location, mobility=False):
             if inp == "NOOD":
                 route = emergency_exit(current_location, mobility)
                 print(f"Route naar Nooduitgang: {route}")
+                exit()
+            if inp == "UIT" and original_location:
+                route = shortest_route(graph, current_location, original_location, mobility)
+                print(f"Route naar uitgang: {route}")
                 exit()
             choice = int(inp) - 1
             if choice < 0 or choice >= len(options):
